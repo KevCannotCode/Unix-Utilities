@@ -38,7 +38,7 @@ int main(int argc, char ** argv) {
         printFile(stdin, argv[1]);
     }
 
-    if(argc <= 3) {
+    if(argc >= 3) {
         for(int i = 2; i < argc; i++) {
             /* Open the file for reading */
             FILE *fp = fopen(argv[i], "r");
