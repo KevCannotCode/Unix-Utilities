@@ -12,7 +12,7 @@
 
 size_t BUFFER = 10;
 
-void printFile(FILE *stream, int flag, char * lookup)
+void printFile(FILE *stream, char * lookup)
 {
     char *line = NULL;
     size_t len = 0;
@@ -22,28 +22,6 @@ void printFile(FILE *stream, int flag, char * lookup)
         if(strstr(line, lookup)) {//a substring matching lookup was found in the file or user input
             printf("%s", line);
         }
-
-        if(flag == -1){//handle stdin
-            break;
-        }
-    }
-
-    free(line);
-    fclose(stream);
-}
-
-void printUserInput(FILE *stream, char * lookup)
-{
-    char *line = (char*) malloc((BUFFER)*sizeof(char));;
-
-    while (NULL != fgets(line, BUFFER, stream)) {
-        if(strstr(line, lookup)) {//a substring matching lookup was found in the file or user input
-            printf("%s", line);
-        }
-
-//        if(flag == -1){//handle stdin
-//            break;
-//        }
     }
 
     free(line);
@@ -57,18 +35,19 @@ int main(int argc, char ** argv) {
     }
 
     if(argc == 2) {
-        printUserInput(stdin, argv[1]);
+        printFile(stdin, argv[1]);
     }
 
-    if(argc == 3) {
-        /* Open the file for reading */
-        FILE *fp = fopen(argv[2], "r");
-        if (!fp)
-        {
-            printf("Error opening file '%s'\n", argv[2]);
-        }
+    if(argc <= 3) {
+        for(int i = 2; i < argc; i++) {
+            /* Open the file for reading */
+            FILE *fp = fopen(argv[i], "r");
+            if (!fp) {
+                printf("Error opening file '%s'\n", argv[i]);
+            }
 
-        printFile(fp, 1, argv[1]);
+            printFile(fp, argv[1]);
+        }
     }
     return 0;
 }
