@@ -32,7 +32,7 @@ size_t BUFFER = 10;
 //    }
 //}
 
-int* readFile(char * filePath, FILE *stream) {
+char* readFile(char * filePath, FILE *stream) {
     printf("start readfile...\n");
 //    struct stat info;
 //    stat(filePath, &info);
@@ -41,7 +41,7 @@ int* readFile(char * filePath, FILE *stream) {
 //    printf("size of %s = %ld\n", filePath, info.st_size);
 
     printf("listing vars ...\n");
-    int * result = (int*) malloc(FILE_SIZE *sizeof(int));
+    char * result = (char*) malloc(FILE_SIZE *sizeof(int));
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -53,8 +53,8 @@ int* readFile(char * filePath, FILE *stream) {
         printf("\nstart loop iteration\n------\n");
         printf("read = %zu , offset = %d\n", read, offset);
         for(int i = 0; i < read ; i++) {
-            printf("for loop i = %d , offset = %d\n\n", i, offset);
             result[offset] = line[i];
+            printf("for loop i = %d , offset = %d result[%d] = %c\n\n", i, offset, i, result[i]);
             offset++;
             if(offset >= FILE_SIZE)
                 break;
@@ -64,9 +64,9 @@ int* readFile(char * filePath, FILE *stream) {
 
     //fill with zeros
     while(offset < FILE_SIZE) {
-        result[offset] = '\0';
+        result[offset] = '0';
         offset++;
-        printf("offset = %d\n", offset);
+        printf("offset = %d result[%d] = %c)\n", offset, offset, result[offset]);
     }
 
     printf("freeing line\n");
@@ -78,7 +78,7 @@ int* readFile(char * filePath, FILE *stream) {
     return result;
 }
 
-char* createArchive(char * writeFileName, int * buffer) {
+char* createArchive(char * writeFileName, char * buffer) {
     printf("creating a write file...\n");
     FILE *writeFile = fopen(writeFileName, "wb");
     if (!writeFile) {
@@ -92,7 +92,12 @@ char* createArchive(char * writeFileName, int * buffer) {
 //    BYTE byteBuff[FILE_SIZE];
 //    string2ByteArray(buffer, byteBuff);
 
-    if( 0 == fwrite(buffer,1,FILE_SIZE,writeFile)) {
+    int byteBuff[FILE_SIZE];
+    for(int i ; i< FILE_SIZE; i++) {
+        byteBuff[i] = buffer[i];
+    }
+
+    if( 0 == fwrite(byteBuff,1,FILE_SIZE,writeFile)) {
         printf("an error occurred when writing chars to archive file.");
     }
 
@@ -123,8 +128,8 @@ int main(int argc, char ** argv) {
         printf("file opened\n");
 
         printf("Calling readFile...\n");
-        int * fileRead = readFile(filePath, fp);
-        printf("%ls\n-----------------\n\n", fileRead);
+        char * fileRead = readFile(filePath, fp);
+        printf("%s\n-----------------\n\n", fileRead);
 
         char * writeFilePath = argv[2];
         printf("archive created ! %s\n", createArchive(writeFilePath, fileRead));
