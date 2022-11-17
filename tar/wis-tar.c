@@ -17,22 +17,22 @@ typedef unsigned char BYTE;
 size_t BUFFER = 10;
 #define FILE_SIZE 100
 
-//function to convert string to byte array
-void string2ByteArray(char* input, BYTE* output)
-{
-    int loop;
-    int i;
+////function to convert string to byte array
+//void string2ByteArray(char* input, BYTE* output)
+//{
+//    int loop;
+//    int i;
+//
+//    loop = 0;
+//    i = 0;
+//
+//    while(input[loop] != '\0')
+//    {
+//        output[i++] = input[loop++];
+//    }
+//}
 
-    loop = 0;
-    i = 0;
-
-    while(input[loop] != '\0')
-    {
-        output[i++] = input[loop++];
-    }
-}
-
-char* readFile(char * filePath, FILE *stream) {
+int* readFile(char * filePath, FILE *stream) {
     printf("start readfile...\n");
 //    struct stat info;
 //    stat(filePath, &info);
@@ -41,7 +41,7 @@ char* readFile(char * filePath, FILE *stream) {
 //    printf("size of %s = %ld\n", filePath, info.st_size);
 
     printf("listing vars ...\n");
-    char * result = (char*) malloc(FILE_SIZE *sizeof(char));
+    int * result = (int*) malloc(FILE_SIZE *sizeof(int));
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -64,8 +64,9 @@ char* readFile(char * filePath, FILE *stream) {
 
     //fill with zeros
     while(offset < FILE_SIZE) {
-        result[offset] = '0';
+        result[offset] = '\0';
         offset++;
+        printf("offset = %d\n", offset);
     }
 
     printf("freeing line\n");
@@ -77,7 +78,7 @@ char* readFile(char * filePath, FILE *stream) {
     return result;
 }
 
-char* createArchive(char * writeFileName, char * buffer) {
+char* createArchive(char * writeFileName, int * buffer) {
     printf("creating a write file...\n");
     FILE *writeFile = fopen(writeFileName, "wb");
     if (!writeFile) {
@@ -86,12 +87,12 @@ char* createArchive(char * writeFileName, char * buffer) {
     }
 
     printf("writing bytes to archive file ...\n");
+//
+//    //convert from chars to bytes
+//    BYTE byteBuff[FILE_SIZE];
+//    string2ByteArray(buffer, byteBuff);
 
-    //convert from chars to bytes
-    BYTE byteBuff[FILE_SIZE];
-    string2ByteArray(buffer, byteBuff);
-
-    if( 0 == fwrite(byteBuff,1,FILE_SIZE,writeFile)) {
+    if( 0 == fwrite(buffer,1,FILE_SIZE,writeFile)) {
         printf("an error occurred when writing chars to archive file.");
     }
 
@@ -122,8 +123,8 @@ int main(int argc, char ** argv) {
         printf("file opened\n");
 
         printf("Calling readFile...\n");
-        char * fileRead = readFile(filePath, fp);
-        printf("%s\n-----------------\n\n", fileRead);
+        int * fileRead = readFile(filePath, fp);
+        printf("%ls\n-----------------\n\n", fileRead);
 
         char * writeFilePath = argv[2];
         printf("archive created ! %s\n", createArchive(writeFilePath, fileRead));
